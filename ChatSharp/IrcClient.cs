@@ -307,7 +307,14 @@ namespace ChatSharp
                     break;
                 }
                 messageLength++;
-                var message = Encoding.GetString(ReadBuffer, 0, messageLength - 2); // -2 to remove \r\n
+
+                int count = 0;
+                if (Encoding.GetString(ReadBuffer, 0, messageLength - 1)[messageLength - 2] == '\r')
+                    count = messageLength - 2; // -2 to remove \r\n
+                else
+                    count = messageLength - 1;
+
+                var message = Encoding.GetString(ReadBuffer, 0, count);
                 HandleMessage(message);
                 Array.Copy(ReadBuffer, messageLength, ReadBuffer, 0, length - messageLength);
                 length -= messageLength;
